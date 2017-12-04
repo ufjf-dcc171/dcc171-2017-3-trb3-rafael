@@ -9,7 +9,7 @@ import java.util.List;
 public class ProjetoDAOJDBC implements ProjetoDAO {
     private Connection conexao;
     private PreparedStatement inserirQuery;
-    private PreparedStatement alterarQuery;
+    private PreparedStatement buscarQuery;
     private PreparedStatement deletarQuery;
     private PreparedStatement listarQuery;
     private final String tabela = "DCC171.projeto";
@@ -17,15 +17,30 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
     public ProjetoDAOJDBC() throws Exception {
         conexao = ConnectionDAO.connection();
         inserirQuery = conexao.prepareStatement("INSERT INTO "+tabela+"(nome) VALUES(?)");
+        buscarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" WHERE nome = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         listarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" ORDER BY nome ASC");
     }
 
     @Override
     public void criar(String nomeProjeto) throws Exception {
-        inserirQuery.clearParameters();
-        inserirQuery.setString(1, nomeProjeto);
-        inserirQuery.executeUpdate();
+        if(buscar(nomeProjeto).equals("")) {
+            inserirQuery.clearParameters();
+            inserirQuery.setString(1, nomeProjeto);
+            inserirQuery.executeUpdate();
+        }
+    }
+
+    @Override
+    public String buscar(String nomeProjeto) throws Exception {
+        String p = "";
+        buscarQuery.clearParameters();
+        buscarQuery.setString(1, nomeProjeto);
+        ResultSet resultado = buscarQuery.executeQuery();
+        while (resultado.next()) {
+            p =resultado.getString(1);
+        }
+        return p;
     }
 
     @Override

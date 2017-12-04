@@ -2,7 +2,7 @@ package ufjf.dcc171;
 
 import java.util.List;
 
-interface FuncoesDAO {
+interface FuncoesAux {
     public void criar(Object objeto) throws Exception;
     public void alterar(Object objeto) throws Exception;
     public void deletar(Object objeto) throws Exception;

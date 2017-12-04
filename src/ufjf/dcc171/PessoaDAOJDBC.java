@@ -14,6 +14,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
     private PreparedStatement inserirProjetoTarefaPessoaQuery;
     private PreparedStatement buscarQuery;
     private PreparedStatement buscarPessoaTarefaProjetoQuery;
+    private PreparedStatement verificarPessoaTarefaProjetoQuery;
     private PreparedStatement alterarQuery;
     private PreparedStatement deletarQuery;
     private PreparedStatement deletarPessoaProjetoQuery;
@@ -30,6 +31,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
         inserirProjetoTarefaPessoaQuery = conexao.prepareStatement("INSERT INTO " + tabelaPTP + " VALUES(?,?,?)");
         buscarQuery = conexao.prepareStatement("SELECT * FROM " + tabela + " WHERE nome = ?");
         buscarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM " + tabelaPTP + " WHERE nome_pessoa = ?");
+        verificarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM " + tabelaPTP + " WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         deletarPessoaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabelaPTP+" WHERE nome_projeto = ? AND nome_pessoa = ?");
         deletarPessoaTarefaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabelaPTP+" WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
@@ -42,13 +44,12 @@ public class PessoaDAOJDBC implements PessoaDAO {
     @Override
     public void criar(Pessoa pessoa, String nomeTarefa, String nomeProjeto) throws Exception {
         List<Pessoa> pessoas = buscaPessoa(pessoa);
-        if(pessoas.isEmpty()) {
+        if(pessoas.isEmpty() && inserirTabelaPTP(pessoa.getNome(), nomeTarefa, nomeProjeto)) {
             inserirQuery.clearParameters();
             inserirQuery.setString(1, pessoa.getNome());
             inserirQuery.setString(2, pessoa.getEmail());
             inserirQuery.executeUpdate();
             
-            inserirTabelaPTP(pessoa.getNome(), nomeTarefa, nomeProjeto);
         } else {
             for(Pessoa p : pessoas) {
                 if(p.getNome().equals(pessoa.getNome()) && p.getEmail().equals(pessoa.getEmail())) {
@@ -92,7 +93,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
             deletarPessoaProjetoQuery.setString(2, p.getNome());
             deletarPessoaProjetoQuery.executeUpdate();
             
-            if(buscaPessoaTabelaProjeto(p.getNome()) == "") {
+            if(buscaPessoaTabelaProjeto(p.getNome()).equals("")) {
                 deletarQuery.clearParameters();
                 deletarQuery.setString(1, p.getNome());
                 deletarQuery.executeUpdate();
@@ -110,12 +111,23 @@ public class PessoaDAOJDBC implements PessoaDAO {
         return listaPessoas(nomeProjeto, nomeTarefa);
     }
 
-    private void inserirTabelaPTP(String nomePessoa, String nomeTarefa, String nomeProjeto) throws Exception {
+    private boolean inserirTabelaPTP(String nomePessoa, String nomeTarefa, String nomeProjeto) throws Exception {
+        verificarPessoaTarefaProjetoQuery.clearParameters();
+        verificarPessoaTarefaProjetoQuery.setString(1, nomeProjeto);
+        verificarPessoaTarefaProjetoQuery.setString(2, nomeTarefa);
+        verificarPessoaTarefaProjetoQuery.setString(3, nomePessoa);
+        ResultSet resultado = verificarPessoaTarefaProjetoQuery.executeQuery();
+        while (resultado.next()) {
+            if(resultado.getString(1).length() > 0) return false;
+        }
+        
         inserirProjetoTarefaPessoaQuery.clearParameters();
         inserirProjetoTarefaPessoaQuery.setString(1, nomeProjeto);
         inserirProjetoTarefaPessoaQuery.setString(2, nomeTarefa);
         inserirProjetoTarefaPessoaQuery.setString(3, nomePessoa);
         inserirProjetoTarefaPessoaQuery.executeUpdate();
+        
+        return true;
     }
     
     private List<Pessoa> listaPessoas(String nomeProjeto, String nomeTarefa) throws Exception {
@@ -150,7 +162,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
         deletarPessoaTarefaProjetoQuery.setString(3, nomePessoa);
         deletarPessoaTarefaProjetoQuery.executeUpdate();
         
-        if(buscaPessoaTabelaProjeto(nomePessoa) == "") {
+        if(buscaPessoaTabelaProjeto(nomePessoa).equals("")) {
             deletarQuery.clearParameters();
             deletarQuery.setString(1, nomePessoa);
             deletarQuery.executeUpdate();
