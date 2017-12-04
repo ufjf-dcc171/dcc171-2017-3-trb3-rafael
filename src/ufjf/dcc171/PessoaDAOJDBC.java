@@ -28,7 +28,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
         conexao = ConnectionDAO.connection();
         inserirQuery = conexao.prepareStatement("INSERT INTO " + tabela + " VALUES(?,?)");
         inserirProjetoTarefaPessoaQuery = conexao.prepareStatement("INSERT INTO " + tabelaPTP + " VALUES(?,?,?)");
-        buscarQuery = conexao.prepareStatement("SELECT * FROM " + tabela + " WHERE nome = ? AND email = ?");
+        buscarQuery = conexao.prepareStatement("SELECT * FROM " + tabela + " WHERE nome = ?");
         buscarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM " + tabelaPTP + " WHERE nome_pessoa = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         deletarPessoaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabelaPTP+" WHERE nome_projeto = ? AND nome_pessoa = ?");
@@ -41,14 +41,21 @@ public class PessoaDAOJDBC implements PessoaDAO {
 
     @Override
     public void criar(Pessoa pessoa, String nomeTarefa, String nomeProjeto) throws Exception {
-        if(buscaPessoa(pessoa) == null) {
+        List<Pessoa> pessoas = buscaPessoa(pessoa);
+        if(pessoas.isEmpty()) {
             inserirQuery.clearParameters();
             inserirQuery.setString(1, pessoa.getNome());
             inserirQuery.setString(2, pessoa.getEmail());
             inserirQuery.executeUpdate();
+            
+            inserirTabelaPTP(pessoa.getNome(), nomeTarefa, nomeProjeto);
+        } else {
+            for(Pessoa p : pessoas) {
+                if(p.getNome().equals(pessoa.getNome()) && p.getEmail().equals(pessoa.getEmail())) {
+                    inserirTabelaPTP(pessoa.getNome(), nomeTarefa, nomeProjeto);
+                }
+            }
         }
-        
-        inserirTabelaPTP(pessoa.getNome(), nomeTarefa, nomeProjeto);
     }
 
     @Override
@@ -150,16 +157,16 @@ public class PessoaDAOJDBC implements PessoaDAO {
         }
     }
     
-    private Pessoa buscaPessoa(Pessoa pessoa) throws Exception {
-        Pessoa p = null;
+    private List<Pessoa> buscaPessoa(Pessoa pessoa) throws Exception {
+        List<Pessoa> pessoas = new ArrayList<>();
         buscarQuery.clearParameters();
         buscarQuery.setString(1, pessoa.getNome());
-        buscarQuery.setString(2, pessoa.getEmail());
         ResultSet resultado = buscarQuery.executeQuery();
         while (resultado.next()) {
-            p = new Pessoa(resultado.getString(1), resultado.getString(2));
+            Pessoa p = new Pessoa(resultado.getString(1), resultado.getString(2));
+            pessoas.add(p);
         }
-        return p;
+        return pessoas;
     }
     
     private String buscaPessoaTabelaProjeto(String nomePessoa) throws Exception {

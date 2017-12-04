@@ -99,6 +99,7 @@ public class Organizador extends JFrame {
                     projetoDAO.criar(nomeProjeto);
                     dtProjetos = projetoDAO.listarTodos();
                     lstProjetos.setModel(new ProjetoListModel(dtProjetos));
+                    lstTarefas.setModel(new DefaultListModel<>());
                 } catch (Exception ex) {
                     Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
                 }
