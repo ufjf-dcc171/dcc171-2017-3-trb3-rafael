@@ -3,8 +3,10 @@ package ufjf.dcc171;
 import java.util.List;
 
 interface TarefaDAO {
-    public void criar(Pessoa pessoa) throws Exception;
-    public void alterar(Pessoa pessoa) throws Exception;
-    public void deletar(Pessoa pessoa) throws Exception;
-    public List<Pessoa> listarTodos() throws Exception;
+    public void criar(Tarefa tarefa, String nomeProjeto) throws Exception;
+    public void alterar(Tarefa tarefa) throws Exception;
+    public void deletar(String nomeTarefa, String nomeProjeto) throws Exception;
+    public void deletarProjeto(String nomeProjeto) throws Exception;
+    public List<Tarefa> buscarTarefaProjeto(String nomeProjeto) throws Exception;
+    public List<Tarefa> listarTodos() throws Exception;
 }

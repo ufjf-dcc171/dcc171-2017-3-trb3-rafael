@@ -19,7 +19,6 @@ public class Trabalho3 {
         } catch (Exception ex) {
             Logger.getLogger(Trabalho3.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         return projetos;
     }
 }
