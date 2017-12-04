@@ -1,8 +1,8 @@
 # Trabalho 3 de Laboratório de Programação 3
 
-Rafael Peixoto Santos de Lima
-Matrícula: 201276051
-Curso: Sistemas de Informação
+>Rafael Peixoto Santos de Lima
+>Matrícula: 201276051
+>Curso: Sistemas de Informação
 
 ## O sistema possui a seguinte lógica:
 >1. um projeto pode ter nenhuma ou várias tarefas associadas.
