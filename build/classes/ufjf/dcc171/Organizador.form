@@ -82,8 +82,8 @@
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButton6" max="32767" attributes="0"/>
-                          <Component id="jButton3" max="32767" attributes="0"/>
+                          <Component id="btnTarefasFazer" max="32767" attributes="0"/>
+                          <Component id="btnTarefasConcluidas" max="32767" attributes="0"/>
                           <Component id="jScrollPane5" alignment="0" pref="0" max="32767" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -237,13 +237,13 @@
               <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnTodasTarefas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnTarefasConcluidas" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnNovoProjeto" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnExcluirProjeto" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnTarefasFazer" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -319,12 +319,12 @@
         <Property name="text" type="java.lang.String" value="Novo projeto"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton3">
+    <Component class="javax.swing.JButton" name="btnTarefasConcluidas">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tarefas conclu&#xed;das"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTarefasConcluidasActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnTodasTarefas">
@@ -340,7 +340,7 @@
         <Property name="text" type="java.lang.String" value="Excluir projeto"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton6">
+    <Component class="javax.swing.JButton" name="btnTarefasFazer">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tarefas a fazer"/>
       </Properties>

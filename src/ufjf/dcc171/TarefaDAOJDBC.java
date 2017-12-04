@@ -15,6 +15,8 @@ public class TarefaDAOJDBC implements TarefaDAO {
     private PreparedStatement deletarQuery;
     private PreparedStatement deletarProjetoQuery;
     private PreparedStatement listarQuery;
+    private PreparedStatement listarTarefaConcluidaQuery;
+    private PreparedStatement listarTarefaFazerQuery;
     private PreparedStatement listarTarefaProjetoQuery;
     private final String tabela = "DCC171.tarefa";
 
@@ -25,7 +27,9 @@ public class TarefaDAOJDBC implements TarefaDAO {
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ? AND nome_projeto = ?");
         deletarProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ?");
         listarQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" ORDER BY nome ASC");
-        listarTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE nome_projeto = ? ORDER BY nome ASC");
+        listarTarefaConcluidaQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE percentual = 100 ORDER BY nome ASC");
+        listarTarefaFazerQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE percentual < 100 ORDER BY nome ASC");
+        listarTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE nome_projeto = ? AND percentual < 100 ORDER BY nome ASC");
     }
 
     @Override
@@ -80,6 +84,32 @@ public class TarefaDAOJDBC implements TarefaDAO {
         List<Tarefa> tarefas = new ArrayList<>();
         listarQuery.clearParameters();
         ResultSet resultado = listarQuery.executeQuery();
+        while (resultado.next()) {
+            Tarefa t = new Tarefa(resultado.getString(1),resultado.getInt(2),new java.sql.Date(resultado.getDate(3).getTime()).toLocalDate());
+            t.setPercentual(resultado.getInt(5));
+            tarefas.add(t);
+        }
+        return tarefas;
+    }
+
+    @Override
+    public List<Tarefa> buscarTarefaConcluida() throws Exception {
+        List<Tarefa> tarefas = new ArrayList<>();
+        listarTarefaConcluidaQuery.clearParameters();
+        ResultSet resultado = listarTarefaConcluidaQuery.executeQuery();
+        while (resultado.next()) {
+            Tarefa t = new Tarefa(resultado.getString(1),resultado.getInt(2),new java.sql.Date(resultado.getDate(3).getTime()).toLocalDate());
+            t.setPercentual(resultado.getInt(5));
+            tarefas.add(t);
+        }
+        return tarefas;
+    }
+
+    @Override
+    public List<Tarefa> buscarTarefaFazer() throws Exception {
+        List<Tarefa> tarefas = new ArrayList<>();
+        listarTarefaFazerQuery.clearParameters();
+        ResultSet resultado = listarTarefaFazerQuery.executeQuery();
         while (resultado.next()) {
             Tarefa t = new Tarefa(resultado.getString(1),resultado.getInt(2),new java.sql.Date(resultado.getDate(3).getTime()).toLocalDate());
             t.setPercentual(resultado.getInt(5));

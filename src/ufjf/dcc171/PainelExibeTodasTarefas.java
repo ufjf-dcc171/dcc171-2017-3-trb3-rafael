@@ -1,6 +1,7 @@
 package ufjf.dcc171;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -11,7 +12,7 @@ import javax.swing.event.ListSelectionListener;
 public class PainelExibeTodasTarefas extends javax.swing.JFrame {
     private TarefaDAO tarefaDAO;
     
-    public PainelExibeTodasTarefas() {
+    public PainelExibeTodasTarefas(List<Tarefa> tarefas) {
         initComponents();
         
         lblTarefaDataFim.setText("");
@@ -21,12 +22,7 @@ public class PainelExibeTodasTarefas extends javax.swing.JFrame {
         lblTarefaPercentual.setText("");
         pgrTarefaPercentual.setValue(0);
         
-        try {
-            tarefaDAO = new TarefaDAOJDBC();
-            lstTodasTarefas.setModel(new TarefaListModel(tarefaDAO.listarTodos()));
-        } catch (Exception ex) {
-            Logger.getLogger(PainelExibeTodasTarefas.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        lstTodasTarefas.setModel(new TarefaListModel(tarefas));
         
         lstTodasTarefas.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -170,41 +166,6 @@ public class PainelExibeTodasTarefas extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PainelExibeTodasTarefas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PainelExibeTodasTarefas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PainelExibeTodasTarefas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PainelExibeTodasTarefas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PainelExibeTodasTarefas().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

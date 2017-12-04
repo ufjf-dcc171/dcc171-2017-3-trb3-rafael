@@ -8,6 +8,8 @@ interface TarefaDAO {
     public void alterar(Tarefa tarefa) throws Exception;
     public void deletar(String nomeTarefa, String nomeProjeto) throws Exception;
     public void deletarProjeto(String nomeProjeto) throws Exception;
-    public List<Tarefa> buscarTarefaProjeto(String nomeProjeto) throws Exception;
     public List<Tarefa> listarTodos() throws Exception;
+    public List<Tarefa> buscarTarefaConcluida() throws Exception;
+    public List<Tarefa> buscarTarefaFazer() throws Exception;
+    public List<Tarefa> buscarTarefaProjeto(String nomeProjeto) throws Exception;
 }
