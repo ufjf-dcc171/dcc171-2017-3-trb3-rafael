@@ -289,6 +289,7 @@ public class Organizador extends JFrame {
                         clearAllPessoaFields();
                         lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
                         lstPessoas.setModel(new DefaultListModel<>());
+                        lstPessoas.updateUI();
                     } catch (Exception ex) {
                         Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
                     }
