@@ -13,6 +13,7 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
     private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarPessoaProjetoQuery;
     private PreparedStatement deletarPessoaTarefaProjetoQuery;
+    private PreparedStatement alterarTarefaPessoaTarefaProjetoQuery;
     private PreparedStatement alterarProjetoPessoaTarefaProjetoQuery;
     private final String tabela = "DCC171.projeto_tarefa_pessoa";
     
@@ -24,6 +25,7 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
         alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome_pessoa = ? WHERE nome_pessoa = ?");
         deletarPessoaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ? AND nome_pessoa = ?");
         deletarPessoaTarefaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
+        alterarTarefaPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome_tarefa= ? WHERE nome_tarefa= ? AND nome_projeto = ?");
         alterarProjetoPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome_projeto= ? WHERE nome_projeto = ?");
     }
     
@@ -86,6 +88,15 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
         deletarPessoaTarefaProjetoQuery.setString(2, nomeTarefa);
         deletarPessoaTarefaProjetoQuery.setString(3, nomePessoa);
         deletarPessoaTarefaProjetoQuery.executeUpdate();
+    }
+    
+    @Override
+    public void alterarTarefaPessoaTarefaProjeto(String oldNomeTarefa, String newNomeTarefa, String nomeProjeto) throws Exception {
+        alterarTarefaPessoaTarefaProjetoQuery.clearParameters();
+        alterarTarefaPessoaTarefaProjetoQuery.setString(1, newNomeTarefa);
+        alterarTarefaPessoaTarefaProjetoQuery.setString(2, oldNomeTarefa);
+        alterarTarefaPessoaTarefaProjetoQuery.setString(3, nomeProjeto);
+        alterarTarefaPessoaTarefaProjetoQuery.executeUpdate();
     }
     
     @Override

@@ -215,34 +215,6 @@ public class Organizador extends JFrame {
             }
         });
         
-        btnInicioHoje.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                txtTarefaDataInicio.setText(FuncoesAux.dateFormatDDMMYYYY(LocalDate.now()));
-            }
-        });
-        
-        btnTarefaPercentualCem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(lstTarefas.getSelectedValue() != null && lstProjetos.getSelectedValue() != null) {
-                    lstTarefas.getSelectedValue().setPercentual(100);
-                    pgrTarefa.setValue(100);
-                    txtTarefaPercentual.setText("100");
-                    
-                    try {
-                        tarefaDAO = new TarefaDAOJDBC();
-                        tarefaDAO.alterarTarefaPercentual(lstTarefas.getSelectedValue(), lstProjetos.getSelectedValue().getNome());
-                        clearAllTarefaFields();
-                        clearAllPessoaFields();
-                        lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
-                    } catch (Exception ex) {
-                        Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        
         btnNovaPessoa.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -292,7 +264,38 @@ public class Organizador extends JFrame {
                 }
             }
         });
-    
+        
+        // ---------------  Botoes auxiliares  -------------------------------------------
+        
+        btnInicioHoje.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                txtTarefaDataInicio.setText(FuncoesAux.dateFormatDDMMYYYY(LocalDate.now()));
+            }
+        });
+        
+        btnTarefaPercentualCem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(lstTarefas.getSelectedValue() != null && lstProjetos.getSelectedValue() != null) {
+                    lstTarefas.getSelectedValue().setPercentual(100);
+                    pgrTarefa.setValue(100);
+                    txtTarefaPercentual.setText("100");
+                    
+                    try {
+                        tarefaDAO = new TarefaDAOJDBC();
+                        tarefaDAO.alterarTarefaPercentual(lstTarefas.getSelectedValue(), lstProjetos.getSelectedValue().getNome());
+                        clearAllTarefaFields();
+                        clearAllPessoaFields();
+                        lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
+                        lstPessoas.setModel(new DefaultListModel<>());
+                    } catch (Exception ex) {
+                        Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        
         // ---------------  Botoes de relatorio  -------------------------------------------
 
         btnTodasTarefas.addActionListener(new ActionListener() {
