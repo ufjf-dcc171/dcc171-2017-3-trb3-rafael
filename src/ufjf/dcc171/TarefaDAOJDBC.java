@@ -12,6 +12,7 @@ public class TarefaDAOJDBC implements TarefaDAO {
     private PreparedStatement inserirQuery;
     private PreparedStatement buscarQuery;
     private PreparedStatement alterarQuery;
+    private PreparedStatement alterarTarefaPercentualQuery;
     private PreparedStatement alterarProjetoQuery;
     private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarQuery;
@@ -28,6 +29,7 @@ public class TarefaDAOJDBC implements TarefaDAO {
         inserirQuery = conexao.prepareStatement("INSERT INTO "+tabela+" VALUES(?,?,?,?,?,?)");
         buscarQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE nome = ? AND nome_projeto = ?");
         alterarQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome = ?, duracao = ?, data_inicio = ?, data_fim = ?, percentual = ?, nome_projeto = ? WHERE nome = ? AND nome_projeto = ?");
+        alterarTarefaPercentualQuery = conexao.prepareStatement("UPDATE "+tabela+" SET percentual = ? WHERE nome = ? AND nome_projeto = ?");
         alterarProjetoQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome_projeto = ? WHERE nome_projeto = ?");
         alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_tarefa= ? WHERE nome_tarefa= ? AND nome_projeto = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ? AND nome_projeto = ?");
@@ -79,6 +81,15 @@ public class TarefaDAOJDBC implements TarefaDAO {
         alterarQuery.executeUpdate();
         
         alterarPessoaTarefaProjeto(oldNomeTarefa, newTarefa.getNome(), nomeProjeto);
+    }
+
+    @Override
+    public void alterarTarefaPercentual(Tarefa tarefa, String nomeProjeto) throws Exception {
+        alterarTarefaPercentualQuery.clearParameters();
+        alterarTarefaPercentualQuery.setInt(1, tarefa.getPercentual());
+        alterarTarefaPercentualQuery.setString(2, tarefa.getNome());
+        alterarTarefaPercentualQuery.setString(3, nomeProjeto);
+        alterarTarefaPercentualQuery.executeUpdate();
     }
 
     @Override

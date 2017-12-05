@@ -222,6 +222,27 @@ public class Organizador extends JFrame {
             }
         });
         
+        btnTarefaPercentualCem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(lstTarefas.getSelectedValue() != null && lstProjetos.getSelectedValue() != null) {
+                    lstTarefas.getSelectedValue().setPercentual(100);
+                    pgrTarefa.setValue(100);
+                    txtTarefaPercentual.setText("100");
+                    
+                    try {
+                        tarefaDAO = new TarefaDAOJDBC();
+                        tarefaDAO.alterarTarefaPercentual(lstTarefas.getSelectedValue(), lstProjetos.getSelectedValue().getNome());
+                        clearAllTarefaFields();
+                        clearAllPessoaFields();
+                        lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
+                    } catch (Exception ex) {
+                        Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        
         btnNovaPessoa.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -392,6 +413,7 @@ public class Organizador extends JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         txtTarefaPercentual = new javax.swing.JTextField();
         btnEditarPojeto = new javax.swing.JButton();
+        btnTarefaPercentualCem = new javax.swing.JButton();
 
         jCheckBox1.setText("jCheckBox1");
 
@@ -508,7 +530,15 @@ public class Organizador extends JFrame {
 
         btnInicioHoje.setText("Hoje");
 
+        txtTarefaPercentual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTarefaPercentualActionPerformed(evt);
+            }
+        });
+
         btnEditarPojeto.setText("Editar projeto");
+
+        btnTarefaPercentualCem.setText("100%");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -527,17 +557,18 @@ public class Organizador extends JFrame {
                             .addComponent(btnEditarPojeto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtTarefaPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnTarefaPercentualCem, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
                             .addComponent(btnTarefasFazer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnTarefasConcluidas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(pgrTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTarefaPercentual)))
+                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pgrTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
@@ -590,7 +621,7 @@ public class Organizador extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -604,24 +635,23 @@ public class Organizador extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(txtTarefaDuracao, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtTarefaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(21, 21, 21)
-                                .addComponent(btnNovaTarefa))
-                            .addComponent(jScrollPane5))
+                                    .addComponent(txtTarefaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnSalvarTarefa)
+                            .addComponent(btnNovaTarefa)
                             .addComponent(jButton8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btnRemoverTarefa)
-                                    .addComponent(pgrTarefa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(10, 10, 10))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtTarefaPercentual)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                            .addComponent(btnSalvarTarefa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pgrTarefa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTarefaPercentual)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnRemoverTarefa)
+                                .addComponent(btnTarefaPercentualCem)))
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(jLabel8))
@@ -684,6 +714,10 @@ public class Organizador extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPessoaEmailActionPerformed
 
+    private void txtTarefaPercentualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTarefaPercentualActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTarefaPercentualActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditarPojeto;
     private javax.swing.JButton btnExcluirProjeto;
@@ -695,6 +729,7 @@ public class Organizador extends JFrame {
     private javax.swing.JButton btnRemoverTarefa;
     private javax.swing.JButton btnSalvarPessoa;
     private javax.swing.JButton btnSalvarTarefa;
+    private javax.swing.JButton btnTarefaPercentualCem;
     private javax.swing.JButton btnTarefasConcluidas;
     private javax.swing.JButton btnTarefasFazer;
     private javax.swing.JButton btnTodasTarefas;

@@ -21,3 +21,4 @@
 >2. cadastro de tarefas e seleção das mesmas nos projetos.
 >3. cadastro de pessoas e seleção das mesmas nas tarefas.
 >4. criação de DAO para a tabela pessoa_tarefa_projeto.
+>5. desabilitar botões caso não possam ser acionados.
