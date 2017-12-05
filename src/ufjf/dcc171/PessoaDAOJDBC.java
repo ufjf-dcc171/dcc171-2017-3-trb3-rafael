@@ -16,6 +16,7 @@ public class PessoaDAOJDBC implements PessoaDAO {
     private PreparedStatement buscarPessoaTarefaProjetoQuery;
     private PreparedStatement verificarPessoaTarefaProjetoQuery;
     private PreparedStatement alterarQuery;
+    private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarQuery;
     private PreparedStatement deletarPessoaProjetoQuery;
     private PreparedStatement deletarPessoaTarefaProjetoQuery;
@@ -32,6 +33,8 @@ public class PessoaDAOJDBC implements PessoaDAO {
         buscarQuery = conexao.prepareStatement("SELECT * FROM " + tabela + " WHERE nome = ?");
         buscarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM " + tabelaPTP + " WHERE nome_pessoa = ?");
         verificarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM " + tabelaPTP + " WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
+        alterarQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome = ?, email = ? WHERE nome = ? AND email = ?");
+        alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_pessoa = ? WHERE nome_pessoa = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         deletarPessoaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabelaPTP+" WHERE nome_projeto = ? AND nome_pessoa = ?");
         deletarPessoaTarefaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabelaPTP+" WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
@@ -49,7 +52,6 @@ public class PessoaDAOJDBC implements PessoaDAO {
             inserirQuery.setString(1, pessoa.getNome());
             inserirQuery.setString(2, pessoa.getEmail());
             inserirQuery.executeUpdate();
-            
         } else {
             for(Pessoa p : pessoas) {
                 if(p.getNome().equals(pessoa.getNome()) && p.getEmail().equals(pessoa.getEmail())) {
@@ -67,8 +69,15 @@ public class PessoaDAOJDBC implements PessoaDAO {
     }
 
     @Override
-    public void alterar(Pessoa pessoa) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void alterar(Pessoa oldPessoa, Pessoa newPessoa) throws Exception {
+        alterarQuery.clearParameters();
+        alterarQuery.setString(1, newPessoa.getNome());
+        alterarQuery.setString(2, newPessoa.getEmail());
+        alterarQuery.setString(3, oldPessoa.getNome());
+        alterarQuery.setString(4, oldPessoa.getEmail());
+        alterarQuery.executeUpdate();
+        
+        alterarPessoaTarefaProjeto(oldPessoa.getNome(), newPessoa.getNome());
     }
 
     @Override
@@ -128,6 +137,13 @@ public class PessoaDAOJDBC implements PessoaDAO {
         inserirProjetoTarefaPessoaQuery.executeUpdate();
         
         return true;
+    }
+    
+    public void alterarPessoaTarefaProjeto(String oldPessoaNome, String newPessoaNome) throws Exception {
+        alterarPessoaTarefaProjetoQuery.clearParameters();
+        alterarPessoaTarefaProjetoQuery.setString(1, newPessoaNome);
+        alterarPessoaTarefaProjetoQuery.setString(2, oldPessoaNome);
+        alterarPessoaTarefaProjetoQuery.executeUpdate();
     }
     
     private List<Pessoa> listaPessoas(String nomeProjeto, String nomeTarefa) throws Exception {

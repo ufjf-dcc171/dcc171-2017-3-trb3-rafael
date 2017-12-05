@@ -1,6 +1,7 @@
 package ufjf.dcc171;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,14 +11,19 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
     private Connection conexao;
     private PreparedStatement inserirQuery;
     private PreparedStatement buscarQuery;
+    private PreparedStatement alterarQuery;
+    private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarQuery;
     private PreparedStatement listarQuery;
     private final String tabela = "DCC171.projeto";
+    private final String tabelaPTP = "DCC171.projeto_tarefa_pessoa";
 
     public ProjetoDAOJDBC() throws Exception {
         conexao = ConnectionDAO.connection();
         inserirQuery = conexao.prepareStatement("INSERT INTO "+tabela+"(nome) VALUES(?)");
         buscarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" WHERE nome = ?");
+        alterarQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome = ? WHERE nome = ?");
+        alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_projeto= ? WHERE nome_projeto = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         listarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" ORDER BY nome ASC");
     }
@@ -44,6 +50,16 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
     }
 
     @Override
+    public void alterar(String oldNomeProjeto, String newNomeProjeto) throws Exception {
+        alterarQuery.clearParameters();
+        alterarQuery.setString(1, newNomeProjeto);
+        alterarQuery.setString(2, oldNomeProjeto);
+        alterarQuery.executeUpdate();
+        
+        alterarPessoaTarefaProjeto(oldNomeProjeto, newNomeProjeto);
+    }
+
+    @Override
     public void deletar(String nomeProjeto) throws Exception {
         deletarQuery.clearParameters();
         deletarQuery.setString(1, nomeProjeto);
@@ -59,5 +75,12 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
             projetos.add(p);
         }
         return projetos;
+    }
+    
+    public void alterarPessoaTarefaProjeto(String oldNomeProjeto, String newNomeProjeto) throws Exception {
+        alterarPessoaTarefaProjetoQuery.clearParameters();
+        alterarPessoaTarefaProjetoQuery.setString(1, newNomeProjeto);
+        alterarPessoaTarefaProjetoQuery.setString(2, oldNomeProjeto);
+        alterarPessoaTarefaProjetoQuery.executeUpdate();
     }
 }

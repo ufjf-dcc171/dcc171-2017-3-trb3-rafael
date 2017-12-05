@@ -25,8 +25,7 @@ public class Organizador extends JFrame {
     public Organizador(List<Projeto> projetos) {
         initComponents();
         
-        dtProjetos = projetos;
-        lstProjetos.setModel(new ProjetoListModel(dtProjetos));
+        lstProjetos.setModel(new ProjetoListModel(projetos));
         
         lstProjetos.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -96,8 +95,29 @@ public class Organizador extends JFrame {
                 if(nomeProjeto != null) try {
                     projetoDAO = new ProjetoDAOJDBC();
                     projetoDAO.criar(nomeProjeto);
-                    dtProjetos = projetoDAO.listarTodos();
-                    lstProjetos.setModel(new ProjetoListModel(dtProjetos));
+                    clearAllTarefaFields();
+                    clearAllPessoaFields();
+                    lstProjetos.setModel(new ProjetoListModel(projetoDAO.listarTodos()));
+                    lstTarefas.setModel(new DefaultListModel<>());
+                } catch (Exception ex) {
+                    Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        btnEditarPojeto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String newNomeProjeto = JOptionPane.showInputDialog(null, "Digite o novo nome do projeto:", "Editar Projeto", JOptionPane.PLAIN_MESSAGE);
+                
+                if(newNomeProjeto != null && lstProjetos.getSelectedValue() != null) try {
+                    projetoDAO = new ProjetoDAOJDBC();
+                    tarefaDAO = new TarefaDAOJDBC();
+                    projetoDAO.alterar(lstProjetos.getSelectedValue().getNome(), newNomeProjeto);
+                    tarefaDAO.alterarProjeto(lstProjetos.getSelectedValue().getNome(), newNomeProjeto);
+                    clearAllTarefaFields();
+                    clearAllPessoaFields();
+                    lstProjetos.setModel(new ProjetoListModel(projetoDAO.listarTodos()));
                     lstTarefas.setModel(new DefaultListModel<>());
                 } catch (Exception ex) {
                     Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
@@ -121,6 +141,7 @@ public class Organizador extends JFrame {
                         clearAllTarefaFields();
                         clearAllPessoaFields();
                         lstProjetos.setModel(new ProjetoListModel(projetoDAO.listarTodos()));
+                        lstTarefas.setModel(new DefaultListModel<>());
                     } catch (Exception ex) {
                         Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -141,6 +162,31 @@ public class Organizador extends JFrame {
                     try {
                         tarefaDAO = new TarefaDAOJDBC();
                         tarefaDAO.criar(tarefa, lstProjetos.getSelectedValue().getNome());
+                        clearAllTarefaFields();
+                        clearAllPessoaFields();
+                        lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
+                    } catch (Exception ex) {
+                        Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        
+        btnSalvarTarefa.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!txtTarefaDataInicio.getText().isEmpty() && !txtTarefaDuracao.getText().isEmpty() && !txtTarefaNome.getText().isEmpty() && lstProjetos.getSelectedValue() != null) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+                    LocalDate localDateInicio = LocalDate.parse(txtTarefaDataInicio.getText(), formatter);
+                    Tarefa tarefa = new Tarefa(txtTarefaNome.getText(), Integer.parseInt(txtTarefaDuracao.getText()), localDateInicio);
+                    if(txtTarefaPercentual.getText().isEmpty()) tarefa.setPercentual(0);
+                    else tarefa.setPercentual(Integer.parseInt(txtTarefaPercentual.getText()));
+                    
+                    try {
+                        tarefaDAO = new TarefaDAOJDBC();
+                        tarefaDAO.alterar(tarefa, lstTarefas.getSelectedValue().getNome(), lstProjetos.getSelectedValue().getNome());
+                        clearAllTarefaFields();
+                        clearAllPessoaFields();
                         lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
                     } catch (Exception ex) {
                         Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
@@ -160,6 +206,7 @@ public class Organizador extends JFrame {
                         tarefaDAO = new TarefaDAOJDBC();
                         tarefaDAO.deletar(lstTarefas.getSelectedValue().getNome(), lstProjetos.getSelectedValue().getNome());
                         clearAllTarefaFields();
+                        clearAllPessoaFields();
                         lstTarefas.setModel(new TarefaListModel(tarefaDAO.buscarTarefaProjeto(lstProjetos.getSelectedValue().getNome())));
                     } catch (Exception ex) {
                         Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,11 +230,29 @@ public class Organizador extends JFrame {
                     try {
                         pessoaDAO = new PessoaDAOJDBC();
                         pessoaDAO.criar(pessoa, lstTarefas.getSelectedValue().getNome(), lstProjetos.getSelectedValue().getNome());
+                        clearAllPessoaFields();
                         lstPessoas.setModel(new PessoaListModel(pessoaDAO.listarPessoaTarefaProjeto(lstProjetos.getSelectedValue().getNome(), lstTarefas.getSelectedValue().getNome())));
                     } catch (Exception ex) {
                         Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }                
+            }
+        });
+        
+        btnSalvarPessoa.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(lstPessoas.getSelectedValue() != null && !txtPessoaNome.getText().isEmpty() && !txtPessoaEmail.getText().isEmpty()) {
+                    Pessoa newPessoa = new Pessoa(txtPessoaNome.getText(), txtPessoaEmail.getText());
+                    try {
+                        pessoaDAO = new PessoaDAOJDBC();
+                        pessoaDAO.alterar(lstPessoas.getSelectedValue(), newPessoa);
+                        clearAllPessoaFields();
+                        lstPessoas.setModel(new PessoaListModel(pessoaDAO.listarPessoaTarefaProjeto(lstProjetos.getSelectedValue().getNome(), lstTarefas.getSelectedValue().getNome())));
+                    } catch (Exception ex) {
+                        Logger.getLogger(Organizador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         });
         
@@ -318,14 +383,15 @@ public class Organizador extends JFrame {
         btnNovaPessoa = new javax.swing.JButton();
         btnRemoverPessoa = new javax.swing.JButton();
         btnNovaTarefa = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
+        btnSalvarTarefa = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         txtTarefaNome = new javax.swing.JTextField();
         btnRemoverTarefa = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
+        btnSalvarPessoa = new javax.swing.JButton();
         btnInicioHoje = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         txtTarefaPercentual = new javax.swing.JTextField();
+        btnEditarPojeto = new javax.swing.JButton();
 
         jCheckBox1.setText("jCheckBox1");
 
@@ -432,15 +498,17 @@ public class Organizador extends JFrame {
 
         btnNovaTarefa.setText("Adicionar tarefa");
 
-        jButton13.setText("Salvar tarefa");
+        btnSalvarTarefa.setText("Salvar tarefa");
 
         jLabel12.setText("Nome");
 
         btnRemoverTarefa.setText("Remover tarefa");
 
-        jButton14.setText("Salvar pessoa");
+        btnSalvarPessoa.setText("Salvar pessoa");
 
         btnInicioHoje.setText("Hoje");
+
+        btnEditarPojeto.setText("Editar projeto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -455,7 +523,8 @@ public class Organizador extends JFrame {
                             .addComponent(btnExcluirProjeto, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                             .addComponent(btnNovoProjeto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel1)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(btnEditarPojeto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btnTarefasFazer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -477,7 +546,7 @@ public class Organizador extends JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnRemoverTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton13, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnSalvarTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
@@ -501,7 +570,7 @@ public class Organizador extends JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                                     .addComponent(btnTodasTarefas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnSalvarPessoa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(txtPessoaEmail)
                                     .addComponent(btnNovaPessoa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
@@ -521,7 +590,7 @@ public class Organizador extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -538,10 +607,10 @@ public class Organizador extends JFrame {
                                     .addComponent(txtTarefaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(21, 21, 21)
                                 .addComponent(btnNovaTarefa))
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton13)
+                            .addComponent(btnSalvarTarefa)
                             .addComponent(jButton8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -557,7 +626,7 @@ public class Organizador extends JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -569,18 +638,21 @@ public class Organizador extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnNovaPessoa)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton14)
+                                .addComponent(btnSalvarPessoa)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnRemoverPessoa))
                             .addComponent(jScrollPane6)))
-                    .addComponent(jScrollPane4))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnNovoProjeto)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTodasTarefas)
                     .addComponent(btnTarefasConcluidas)
-                    .addComponent(btnNovoProjeto))
+                    .addComponent(btnEditarPojeto))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnExcluirProjeto)
@@ -613,6 +685,7 @@ public class Organizador extends JFrame {
     }//GEN-LAST:event_txtPessoaEmailActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditarPojeto;
     private javax.swing.JButton btnExcluirProjeto;
     private javax.swing.JButton btnInicioHoje;
     private javax.swing.JButton btnNovaPessoa;
@@ -620,11 +693,11 @@ public class Organizador extends JFrame {
     private javax.swing.JButton btnNovoProjeto;
     private javax.swing.JButton btnRemoverPessoa;
     private javax.swing.JButton btnRemoverTarefa;
+    private javax.swing.JButton btnSalvarPessoa;
+    private javax.swing.JButton btnSalvarTarefa;
     private javax.swing.JButton btnTarefasConcluidas;
     private javax.swing.JButton btnTarefasFazer;
     private javax.swing.JButton btnTodasTarefas;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JCheckBox jCheckBox1;

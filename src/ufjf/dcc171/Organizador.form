@@ -79,6 +79,7 @@
                           <Component id="btnNovoProjeto" alignment="1" max="32767" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jScrollPane4" alignment="1" pref="0" max="32767" attributes="0"/>
+                          <Component id="btnEditarPojeto" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -104,7 +105,7 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="btnRemoverTarefa" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="jButton13" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btnSalvarTarefa" alignment="1" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
@@ -135,7 +136,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jButton7" alignment="1" pref="195" max="32767" attributes="0"/>
                                   <Component id="btnTodasTarefas" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="jButton14" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btnSalvarPessoa" alignment="1" max="32767" attributes="0"/>
                                   <Component id="txtPessoaEmail" max="32767" attributes="0"/>
                                   <Component id="btnNovaPessoa" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
@@ -164,7 +165,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -185,11 +186,11 @@
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="btnNovaTarefa" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane5" min="-2" max="-2" attributes="0"/>
+                          <Component id="jScrollPane5" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton13" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnSalvarTarefa" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton8" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -211,7 +212,7 @@
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -223,14 +224,18 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnNovaPessoa" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton14" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnSalvarPessoa" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="btnRemoverPessoa" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jScrollPane6" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jScrollPane4" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jScrollPane4" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="btnNovoProjeto" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
@@ -238,7 +243,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnTodasTarefas" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnTarefasConcluidas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnNovoProjeto" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnEditarPojeto" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -429,7 +434,7 @@
         <Property name="text" type="java.lang.String" value="Adicionar tarefa"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton13">
+    <Component class="javax.swing.JButton" name="btnSalvarTarefa">
       <Properties>
         <Property name="text" type="java.lang.String" value="Salvar tarefa"/>
       </Properties>
@@ -446,7 +451,7 @@
         <Property name="text" type="java.lang.String" value="Remover tarefa"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton14">
+    <Component class="javax.swing.JButton" name="btnSalvarPessoa">
       <Properties>
         <Property name="text" type="java.lang.String" value="Salvar pessoa"/>
       </Properties>
@@ -459,6 +464,11 @@
     <Component class="javax.swing.JSeparator" name="jSeparator1">
     </Component>
     <Component class="javax.swing.JTextField" name="txtTarefaPercentual">
+    </Component>
+    <Component class="javax.swing.JButton" name="btnEditarPojeto">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Editar projeto"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

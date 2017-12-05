@@ -12,6 +12,8 @@ public class TarefaDAOJDBC implements TarefaDAO {
     private PreparedStatement inserirQuery;
     private PreparedStatement buscarQuery;
     private PreparedStatement alterarQuery;
+    private PreparedStatement alterarProjetoQuery;
+    private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarQuery;
     private PreparedStatement deletarProjetoQuery;
     private PreparedStatement listarQuery;
@@ -19,11 +21,15 @@ public class TarefaDAOJDBC implements TarefaDAO {
     private PreparedStatement listarTarefaFazerQuery;
     private PreparedStatement listarTarefaProjetoQuery;
     private final String tabela = "DCC171.tarefa";
+    private final String tabelaPTP = "DCC171.projeto_tarefa_pessoa";
 
     public TarefaDAOJDBC() throws Exception {
         conexao = ConnectionDAO.connection();
         inserirQuery = conexao.prepareStatement("INSERT INTO "+tabela+" VALUES(?,?,?,?,?,?)");
         buscarQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" WHERE nome = ? AND nome_projeto = ?");
+        alterarQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome = ?, duracao = ?, data_inicio = ?, data_fim = ?, percentual = ?, nome_projeto = ? WHERE nome = ? AND nome_projeto = ?");
+        alterarProjetoQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome_projeto = ? WHERE nome_projeto = ?");
+        alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_tarefa= ? WHERE nome_tarefa= ? AND nome_projeto = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ? AND nome_projeto = ?");
         deletarProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ?");
         listarQuery = conexao.prepareStatement("SELECT * FROM "+tabela+" ORDER BY nome ASC");
@@ -60,8 +66,27 @@ public class TarefaDAOJDBC implements TarefaDAO {
     }
 
     @Override
-    public void alterar(Tarefa tarefa) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void alterar(Tarefa newTarefa, String oldNomeTarefa, String nomeProjeto) throws Exception {
+        alterarQuery.clearParameters();
+        alterarQuery.setString(1, newTarefa.getNome());
+        alterarQuery.setInt(2, newTarefa.getDuracao());
+        alterarQuery.setDate(3, Date.valueOf(newTarefa.getDataInicio()));
+        alterarQuery.setDate(4, Date.valueOf(newTarefa.getDataFim()));
+        alterarQuery.setInt(5, newTarefa.getPercentual());
+        alterarQuery.setString(6, nomeProjeto);
+        alterarQuery.setString(7, oldNomeTarefa);
+        alterarQuery.setString(8, nomeProjeto);
+        alterarQuery.executeUpdate();
+        
+        alterarPessoaTarefaProjeto(oldNomeTarefa, newTarefa.getNome(), nomeProjeto);
+    }
+
+    @Override
+    public void alterarProjeto(String oldNomeProjeto, String newNomeProjeto) throws Exception {
+        alterarProjetoQuery.clearParameters();
+        alterarProjetoQuery.setString(1, newNomeProjeto);
+        alterarProjetoQuery.setString(2, oldNomeProjeto);
+        alterarProjetoQuery.executeUpdate();
     }
 
     @Override
@@ -130,5 +155,13 @@ public class TarefaDAOJDBC implements TarefaDAO {
             tarefas.add(t);
         }
         return tarefas;
+    }
+    
+    public void alterarPessoaTarefaProjeto(String oldNomeTarefa, String newNomeTarefa, String nomeProjeto) throws Exception {
+        alterarPessoaTarefaProjetoQuery.clearParameters();
+        alterarPessoaTarefaProjetoQuery.setString(1, newNomeTarefa);
+        alterarPessoaTarefaProjetoQuery.setString(2, oldNomeTarefa);
+        alterarPessoaTarefaProjetoQuery.setString(3, nomeProjeto);
+        alterarPessoaTarefaProjetoQuery.executeUpdate();
     }
 }
