@@ -13,6 +13,7 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
     private PreparedStatement alterarPessoaTarefaProjetoQuery;
     private PreparedStatement deletarPessoaProjetoQuery;
     private PreparedStatement deletarPessoaTarefaProjetoQuery;
+    private PreparedStatement alterarProjetoPessoaTarefaProjetoQuery;
     private final String tabela = "DCC171.projeto_tarefa_pessoa";
     
     public PessoaTarefaProjetoDAOJDBC() throws Exception {
@@ -23,8 +24,7 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
         alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome_pessoa = ? WHERE nome_pessoa = ?");
         deletarPessoaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ? AND nome_pessoa = ?");
         deletarPessoaTarefaProjetoQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome_projeto = ? AND nome_tarefa = ? AND nome_pessoa = ?");
-//        listarPessoaProjetoQuery = conexao.prepareStatement("SELECT * FROM (SELECT " + tabela + ".* FROM " + tabela + " JOIN (SELECT * FROM " + tabelaPTP + " WHERE nome_projeto = ?) AS resultado1 ON resultado1.nome_pessoa = " + tabela + ".nome) AS resultado2");
-//        listarPessoaTarefaProjetoQuery = conexao.prepareStatement("SELECT * FROM (SELECT " + tabela + ".* FROM " + tabela + " JOIN (SELECT * FROM " + tabelaPTP + " WHERE nome_projeto = ? AND nome_tarefa = ?) AS resultado1 ON resultado1.nome_pessoa = " + tabela + ".nome) AS resultado2");
+        alterarProjetoPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabela + " SET nome_projeto= ? WHERE nome_projeto = ?");
     }
     
     private void inserirPessoaPTP(String nomeProjeto, String nomeTarefa, String nomePessoa) throws Exception {
@@ -86,5 +86,13 @@ public class PessoaTarefaProjetoDAOJDBC implements PessoaTarefaProjetoDAO {
         deletarPessoaTarefaProjetoQuery.setString(2, nomeTarefa);
         deletarPessoaTarefaProjetoQuery.setString(3, nomePessoa);
         deletarPessoaTarefaProjetoQuery.executeUpdate();
+    }
+    
+    @Override
+    public void alterarProjetoPessoaTarefaProjeto(String oldNomeProjeto, String newNomeProjeto) throws Exception {
+        alterarProjetoPessoaTarefaProjetoQuery.clearParameters();
+        alterarProjetoPessoaTarefaProjetoQuery.setString(1, newNomeProjeto);
+        alterarProjetoPessoaTarefaProjetoQuery.setString(2, oldNomeProjeto);
+        alterarProjetoPessoaTarefaProjetoQuery.executeUpdate();
     }
 }

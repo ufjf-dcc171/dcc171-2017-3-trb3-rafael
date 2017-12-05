@@ -6,4 +6,5 @@ interface PessoaTarefaProjetoDAO {
     public void alterarPessoaTarefaProjeto(String oldPessoaNome, String newPessoaNome) throws Exception;
     public void deletarProjeto(String nomeProjeto, Pessoa p) throws Exception;
     public void deletarPessoa(String nomePessoa, String nomeTarefa, String nomeProjeto) throws Exception;
+    public void alterarProjetoPessoaTarefaProjeto(String oldNomeProjeto, String newNomeProjeto) throws Exception;
 }

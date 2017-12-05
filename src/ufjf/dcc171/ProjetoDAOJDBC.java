@@ -16,16 +16,17 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
     private PreparedStatement deletarQuery;
     private PreparedStatement listarQuery;
     private final String tabela = "DCC171.projeto";
-    private final String tabelaPTP = "DCC171.projeto_tarefa_pessoa";
+    private PessoaTarefaProjetoDAO pessoaTarefaProjetoDAO;
 
     public ProjetoDAOJDBC() throws Exception {
         conexao = ConnectionDAO.connection();
         inserirQuery = conexao.prepareStatement("INSERT INTO "+tabela+"(nome) VALUES(?)");
         buscarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" WHERE nome = ?");
         alterarQuery = conexao.prepareStatement("UPDATE "+tabela+" SET nome = ? WHERE nome = ?");
-        alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_projeto= ? WHERE nome_projeto = ?");
+//        alterarPessoaTarefaProjetoQuery = conexao.prepareStatement("UPDATE " + tabelaPTP + " SET nome_projeto= ? WHERE nome_projeto = ?");
         deletarQuery = conexao.prepareStatement("DELETE FROM "+tabela+" WHERE nome = ?");
         listarQuery = conexao.prepareStatement("SELECT nome FROM "+tabela+" ORDER BY nome ASC");
+        pessoaTarefaProjetoDAO = new PessoaTarefaProjetoDAOJDBC();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
         alterarQuery.setString(2, oldNomeProjeto);
         alterarQuery.executeUpdate();
         
-        alterarPessoaTarefaProjeto(oldNomeProjeto, newNomeProjeto);
+        pessoaTarefaProjetoDAO.alterarProjetoPessoaTarefaProjeto(oldNomeProjeto, newNomeProjeto);
     }
 
     @Override
@@ -78,9 +79,10 @@ public class ProjetoDAOJDBC implements ProjetoDAO {
     }
     
     public void alterarPessoaTarefaProjeto(String oldNomeProjeto, String newNomeProjeto) throws Exception {
-        alterarPessoaTarefaProjetoQuery.clearParameters();
-        alterarPessoaTarefaProjetoQuery.setString(1, newNomeProjeto);
-        alterarPessoaTarefaProjetoQuery.setString(2, oldNomeProjeto);
-        alterarPessoaTarefaProjetoQuery.executeUpdate();
+        pessoaTarefaProjetoDAO.alterarProjetoPessoaTarefaProjeto(oldNomeProjeto, newNomeProjeto);
+//        alterarPessoaTarefaProjetoQuery.clearParameters();
+//        alterarPessoaTarefaProjetoQuery.setString(1, newNomeProjeto);
+//        alterarPessoaTarefaProjetoQuery.setString(2, oldNomeProjeto);
+//        alterarPessoaTarefaProjetoQuery.executeUpdate();
     }
 }
